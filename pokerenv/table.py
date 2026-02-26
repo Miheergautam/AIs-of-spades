@@ -13,9 +13,26 @@ BB = 5
 
 
 class Table(gym.Env):
+<<<<<<< feature/pokerenv/lib
     def __init__(self, n_players, player_names=None, track_single_player=False, stack_low=50, stack_high=200, hand_history_location='hands/', invalid_action_penalty=0):
         self.action_space = gym.spaces.Tuple((gym.spaces.Discrete(4), gym.spaces.Box(-math.inf, math.inf, (1, 1))))
         self.observation_space = gym.spaces.Box(-math.inf, math.inf, (59, 1))
+=======
+    def __init__(
+        self,
+        n_players,
+        player_names=None,
+        track_single_player=False,
+        stack_low=50,
+        stack_high=200,
+        hand_history_location="hands/",
+        invalid_action_penalty=0,
+    ):
+        self.action_space = gym.spaces.Tuple(
+            (gym.spaces.Discrete(4), gym.spaces.Box(-math.inf, math.inf, (1, 1)))
+        )
+        self.observation_space = gym.spaces.Box(-math.inf, math.inf, (58, 1))
+>>>>>>> main
         self.n_players = n_players
         if player_names is None:
             player_names = {}
@@ -273,19 +290,46 @@ class Table(gym.Env):
             transitioned = True
         if self.street == GameState.FLOP and (not transitioned or transition_to_end):
             new = self.deck.draw(1)
+<<<<<<< feature/pokerenv/lib
             self.cards = self.cards + new
             self._write_event("*** TURN *** [%s %s %s] [%s]" %
                               (Card.int_to_str(self.cards[0]), Card.int_to_str(self.cards[1]),
                                Card.int_to_str(self.cards[2]), Card.int_to_str(self.cards[3])))
+=======
+            self.cards.append(new)
+            self._write_event(
+                "*** TURN *** [%s %s %s] [%s]"
+                % (
+                    Card.int_to_str(self.cards[0]),
+                    Card.int_to_str(self.cards[1]),
+                    Card.int_to_str(self.cards[2]),
+                    Card.int_to_str(self.cards[3]),
+                )
+            )
+>>>>>>> main
             self.street = GameState.TURN
             transitioned = True
         if self.street == GameState.TURN and (not transitioned or transition_to_end):
             new = self.deck.draw(1)
+<<<<<<< feature/pokerenv/lib
             self.cards = self.cards + new
             self._write_event("*** RIVER *** [%s %s %s %s] [%s]" %
                               (Card.int_to_str(self.cards[0]), Card.int_to_str(self.cards[1]),
                                Card.int_to_str(self.cards[2]), Card.int_to_str(self.cards[3]),
                                Card.int_to_str(self.cards[4])))
+=======
+            self.cards.append(new)
+            self._write_event(
+                "*** RIVER *** [%s %s %s %s] [%s]"
+                % (
+                    Card.int_to_str(self.cards[0]),
+                    Card.int_to_str(self.cards[1]),
+                    Card.int_to_str(self.cards[2]),
+                    Card.int_to_str(self.cards[3]),
+                    Card.int_to_str(self.cards[4]),
+                )
+            )
+>>>>>>> main
             self.street = GameState.RIVER
             transitioned = True
         if self.street == GameState.RIVER and (not transitioned or transition_to_end):
@@ -418,9 +462,13 @@ class Table(gym.Env):
                 "w",
             ) as f:
                 for row in self.hand_history:
+<<<<<<< feature/pokerenv/lib
                     f.writelines(row + '\n')
                     
         # print(self.hand_history)
+=======
+                    f.writelines(row + "\n")
+>>>>>>> main
 
     def _distribute_pot(self):
         pot = 0
@@ -546,10 +594,19 @@ class Table(gym.Env):
         others = [other for other in self.players if other is not player]
         # print(others)
         for i in range(len(others)):
+<<<<<<< feature/pokerenv/lib
             observation[29 + i * 6] = others[i].position
             observation[30 + i * 6] = others[i].state.value
             observation[31 + i * 6] = others[i].stack
             observation[32 + i * 6] = others[i].money_in_pot
             observation[33 + i * 6] = others[i].bet_this_street
             observation[34 + i * 6] = int(others[i].all_in)
+=======
+            observation[23 + i * 6] = others[i].position
+            observation[24 + i * 6] = others[i].state.value
+            observation[25 + i * 6] = others[i].stack
+            observation[26 + i * 6] = others[i].money_in_pot
+            observation[27 + i * 6] = others[i].bet_this_street
+            observation[28 + i * 6] = int(others[i].all_in)
+>>>>>>> main
         return observation
