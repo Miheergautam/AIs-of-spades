@@ -1,6 +1,5 @@
 from pokerenv.common import PlayerState, PlayerAction
 
-
 class Player:
     def __init__(self, identifier, name, penalty):
         self.state = PlayerState.ACTIVE

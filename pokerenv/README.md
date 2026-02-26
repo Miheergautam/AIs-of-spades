@@ -1,13 +1,11 @@
 # Pokerenv
-Pokerenv is an openAI gym (https://gym.openai.com/docs/) compliant reinforcement learning environment for No Limit Texas Hold'em. It supports 2-6 player tables.
-
 The environment can be configured to output hand history files, which can be viewed with any pokerstars compatible tracking software (holdem manager, pokertracker, etc.), allowing you to easily track the learning process.
 
 ## Installation and dependencies
 ```shell
 pip install numpy
 pip install treys
-pip install pokerenv
+pip install gymnasium
 ```
 
 ## Usage information 

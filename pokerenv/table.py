@@ -1,6 +1,6 @@
 import numpy as np
 import time
-import gym
+import gymnasium as gym
 import math
 from treys import Deck, Evaluator, Card
 from pokerenv.common import GameState, PlayerState, PlayerAction, TablePosition, Action
@@ -15,7 +15,7 @@ BB = 5
 class Table(gym.Env):
     def __init__(self, n_players, player_names=None, track_single_player=False, stack_low=50, stack_high=200, hand_history_location='hands/', invalid_action_penalty=0):
         self.action_space = gym.spaces.Tuple((gym.spaces.Discrete(4), gym.spaces.Box(-math.inf, math.inf, (1, 1))))
-        self.observation_space = gym.spaces.Box(-math.inf, math.inf, (58, 1))
+        self.observation_space = gym.spaces.Box(-math.inf, math.inf, (59, 1))
         self.n_players = n_players
         if player_names is None:
             player_names = {}
@@ -204,6 +204,7 @@ class Table(gym.Env):
 
     def _street_transition(self, transition_to_end=False):
         transitioned = False
+        print("Street:", self.street)
         if self.street == GameState.PREFLOP:
             self.cards = self.deck.draw(3)
             self._write_event("*** FLOP *** [%s %s %s]" %
@@ -213,7 +214,7 @@ class Table(gym.Env):
             transitioned = True
         if self.street == GameState.FLOP and (not transitioned or transition_to_end):
             new = self.deck.draw(1)
-            self.cards.append(new)
+            self.cards = self.cards + new
             self._write_event("*** TURN *** [%s %s %s] [%s]" %
                               (Card.int_to_str(self.cards[0]), Card.int_to_str(self.cards[1]),
                                Card.int_to_str(self.cards[2]), Card.int_to_str(self.cards[3])))
@@ -221,7 +222,7 @@ class Table(gym.Env):
             transitioned = True
         if self.street == GameState.TURN and (not transitioned or transition_to_end):
             new = self.deck.draw(1)
-            self.cards.append(new)
+            self.cards = self.cards + new
             self._write_event("*** RIVER *** [%s %s %s %s] [%s]" %
                               (Card.int_to_str(self.cards[0]), Card.int_to_str(self.cards[1]),
                                Card.int_to_str(self.cards[2]), Card.int_to_str(self.cards[3]),
@@ -308,6 +309,8 @@ class Table(gym.Env):
             with open('%s' % self.hand_history_location + 'handhistory_%s.txt' % time.time(), 'w') as f:
                 for row in self.hand_history:
                     f.writelines(row + '\n')
+                    
+        # print(self.hand_history)
 
     def _distribute_pot(self):
         pot = 0
@@ -407,16 +410,17 @@ class Table(gym.Env):
         for i in range(len(self.cards)):
             observation[16 + (i * 2)] = Card.get_suit_int(self.cards[i])
             observation[17 + (i * 2)] = Card.get_rank_int(self.cards[i])
-        observation[20] = self.pot
-        observation[21] = self.bet_to_match
-        observation[22] = self.minimum_raise
+        observation[26] = self.pot
+        observation[27] = self.bet_to_match
+        observation[28] = self.minimum_raise
 
         others = [other for other in self.players if other is not player]
+        # print(others)
         for i in range(len(others)):
-            observation[23 + i * 6] = others[i].position
-            observation[24 + i * 6] = others[i].state.value
-            observation[25 + i * 6] = others[i].stack
-            observation[26 + i * 6] = others[i].money_in_pot
-            observation[27 + i * 6] = others[i].bet_this_street
-            observation[28 + i * 6] = int(others[i].all_in)
+            observation[29 + i * 6] = others[i].position
+            observation[30 + i * 6] = others[i].state.value
+            observation[31 + i * 6] = others[i].stack
+            observation[32 + i * 6] = others[i].money_in_pot
+            observation[33 + i * 6] = others[i].bet_this_street
+            observation[34 + i * 6] = int(others[i].all_in)
         return observation
